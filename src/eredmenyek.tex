@@ -1,0 +1,83 @@
+%----------------------------------------------------------------------------
+\chapter{Eredmények}
+%----------------------------------------------------------------------------
+	\section{MATLAB implementációk}
+	A referenciaként szolgáló MATLAB algoritmus lineáris programszervezést
+	alkalmazva az elérhető fajlagos futási idő $\sim100 ms$.
+	
+	A kód minimális változtatásával elérhető a párhuzamos végrehajtás. Ezt a
+	\texttt{for} ciklusok Parallel Toolbox beli \texttt{parfor} utasítására
+	cserélve érhetjük el. 4 processzormaggal rendelkező PC-n  legjobb esetben a negyedére csökkenhet a
+	futási idő. Valójában ez sose történik meg.
+	A MATLAB Parallel Toolbox-a az egyes szimulácókat adott processzormagra osztja el.
+	Korábban láttuk, hogy ezen szimulációk lépésigénye nagyban eltér egymástól, így előáll az a
+	sajnálatos eset, hogy 3 mag tétlenül a negyedikre vár, ami miatt ez nem tekinthető járható útnak. 
+	
+	\section{OpenCL implementációk}
+	OpenCL keretrendszer segítségével írt programot a GPU-n futtatva az
+	\ref{table:openresult}. táblázatban látható eredményeket kapjuk.
+	Csupán a globális memóriát használva a referenciához képest romlik a
+	teljesítmény. Ezt a videókártya prediktív cache nélküli kialakításának és a
+	globális memórájának a kiéheztetésének tudhatjuk be.
+	A lokális memória használata a futási időt drasztikusan le tudja
+	csökkenteni, ami a korábban ismertetett memória szervezési megfontolások
+	helyességét igazolja.
+
+
+
+xx
+
+
+
+
+
+	A programot a különböző eszközökön futtatva a \ref{table:results}. táblázatban látható futási
+	eredményeket produkálta. A táblázatban látható futási idők 100 futási idő átlaga.
+	A táblázathoz felvettem egy fiktív mérőszámot (teljesítmény tényező) a különböző architektúra
+	összehasonlítására.
+	A mérőszám értéke minél kissebb, annál gyorsabban hajtódik végre egy utasítás.
+	\begin{table}[H]
+	\footnotesize
+	\centering
+	\caption[Eszközök futási idejének összehasonlítása]{Az eszközök erőforrásainak és a rajta futtatott
+	programok futási idejének összehasonlítása.}
+	\label{table:results}
+	\setlength{\extrarowheight}{8pt}
+% 		\begin{tabular}{ l | r | r | r | r}
+% 		 & Intel Core i5 & nVidia GT330M & Intel Xeon & Xeon PHI \\ \hline
+% 		MAX COMPUTE UNITS & $4$ & $6$ & $8$ & $224$\\
+% 		MAX CLOCK FREQUENCY & 2400 & 1265 & 3000 & 1100\\
+% 		MAX WORK GROUP\_SIZE & $8192$ & $512$ & $8192$ & $8192$ \\ \hline\hline
+% 		GLOBAL MEM SIZE & $\sim 4Gbyte$ & $1Gbyte$ & $8Gbyte$ & $\sim 4.5Gbyte$\\
+% 		LOCAL MEM SIZE & $32 Kbyte$ & $16 Kbyte$ & $32 Kbyte$ & $32 Kbyte$\\ \hline\hline
+% 		Futási idő &
+% 		\end{tabular}
+	\begin{tabular}{ l | r | r}
+		 & Intel Core i5 M520 & nVidia GT330M \\ \hline
+		MAX COMPUTE UNITS $[1]$ & $4$ & $6$\\
+		MAX CLOCK FREQUENCY $[\mathrm{MHz}]$ & 2400 & 1265 \\
+		MAX WORK GROUP\_SIZE & $8192$ & $512$ \\ \hline\hline
+		GLOBAL MEM SIZE & $\sim 4\ \mathrm{GByte}$ & $\sim 1\ \mathrm{GByte}$\\
+		%MAX\_CONSTANT\_BUFFER\_SIZE & $131072$ & $65536$ & $131072$ & $131072$\\
+		LOCAL MEM SIZE & $32\ \mathrm{KByte}$ & $16\ \mathrm{KByte}$\\ \hline\hline
+% 		Kép mérete & $1024\times 1024$ & $1024\times 1024$ \\ 
+		Futási idő $(T)$ & $478.71\ ms$ & $191.94\ ms$\\
+		Teljesítmény tényező $\left(P=\frac{1}{\mathrm{UNITS}\times \mathrm{FREQUENCY}}\right)$ &
+		$104.16\cdot 10^{-6}$ & $131.75\cdot 10^{-6}$\\
+		Fajlagos utasításszám $(T/P)$ &  $4.59\cdot 10^3$ & $1.45\cdot 10^3$ 
+	\end{tabular}
+	\end{table}
+	\noindent Látható, hogy a GPU-n való futtatás közel $666\times$ gyorsulást jelent.
+	Ezt két dolognak tudom be:
+	\begin{itemize}
+		\item \emph{Memória:} A CPU memóriája DDR3 @ 1066 MHz 64 bites busz szélességgel, míg a GPU
+		memóriája GDDR3 @ 1066 MHz 128 bites busz szélességgel,
+		\item \emph{Processzor mag:} A CPU 4 compute unit-al rendelkezik, ami 4 szálra, ami 2
+		processzormagra az Intel HyperThread technológiájával képeződik le, míg a GPU 6 compute unit-al
+		rendelkezik, ami 48 CUDA core-ra képeződik le.
+	\end{itemize}
+	Továbbá figyelembe kell venni, hogy a program futása a többi programmal konkurrensen történik, CPU
+	esetén az operációs rendszerrel, GPU esetén a megjelenítéssel.
+	
+
+

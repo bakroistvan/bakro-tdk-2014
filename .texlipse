@@ -1,0 +1,14 @@
+#TeXlipse project settings
+#Sat Oct 18 01:16:51 CEST 2014
+markTmpDer=true
+builderNum=6
+outputDir=out/
+makeIndSty=
+bibrefDir=
+outputFormat=pdf
+tempDir=tmp
+mainTexFile=main.tex
+outputFile=bakro-tdk-2014.pdf
+langSpell=hu
+markDer=true
+srcDir=src/

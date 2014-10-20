@@ -1,0 +1,30 @@
+%----------------------------------------------------------------------------
+\chapter{Összegzés}
+%----------------------------------------------------------------------------
+	A cikkben összefoglaltam az AFM felületi töltéssűrűség méréstechnikáját, amiben azonosítottam a
+	kapacitás értékének kritikus voltát. Ezidáig a kapacitás értékének a \cite{Hudlet1998,Butt20051}
+	szerinti közelítéseket tartalmazó analitikus eredményt lehetett felhasználni.
+	
+	Feladatként ezen kapacitás értékét számító szimulátor építését tűztem ki, aminek elfogaható időn
+	belül kell eredményt szolgáltatnia. A párhuzamosítás lehetősége triviálisan adódott.
+	A hordozhatóság és a gyorsabb végrehajtás végett a szimulátort OpenCL 
+	környezetben implementáltam, ami a szimulátor heterogén multiproszesszoros környezetben való
+	futtatását lehetővé teszi.
+	
+	Az eredményeket ismertetve a szimulátor futási idejében látványos gyorsulást tapasztaltam, ami
+	az érdesebb felületek esetén is elfogadhatóan pontos eredményt tud szolgáltatni. 
+
+	Végül az elkészült programot CPU-n és GPU-n is futtatva a futási idejüket összevetettem és
+	azonosítottam a gyorsulás forrását kitérve a processzormagra és a memóriájára.
+	
+	\section*{További feladatok:}
+	\begin{itemize}
+		\item A szimuláció felhasználásával történő töltéssűrűség származtatása még várat magára, ugyanígy ezen származtatás
+		validálására való mérési összeállítás kidolgolgozása.
+		\item A szimulátor magját képező lineáris egyenletrendszer iterációs megoldó konvergenciájának bizonyítása és az alternatív
+		direkt megoldó vizsgálata is további feladat.
+	\end{itemize}
+	
+	
+	
+	
