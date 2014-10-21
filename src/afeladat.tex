@@ -103,38 +103,81 @@
 %               KK2*(fip(idx,idy,idz-1)+fip(idx,idy,idz+1))
 
 \section{Szimulálandó térfogat} \label{sec:sim_terfogat}
-	
-	A felületmérés során a függőleges pontossághoz képest a vízszintes felbontás jóval kissebb (ritkábbak)
-	$\delta_x=\delta_y=120nm \gg \delta_z=10nm$ (lásd \ref{sec:feladat}. rész).
-	A Coulomb-kölcsönhatás a távolság négyzetével fordítottan arányos,
-	\todo[prepend,fancyline]{$1/r$-es közelítés esetén 3x3 szélére mekkora lesz}
-	így az előbb említettek értelmében egy mérési pont szomszédjait, pontosabban egy redukált
-	környezetét szükséges csupán szimulálni. Hiszen azon kívül már elhanyagolható a villamos térerősség.
+\subsection{Szimulálandó térfogat alapja}
+	A felületmérés során a minta-tű távolsága jóval kissebb a mérési pontok vízszintes távolságánál (lásd \ref{fig:afm}. ábra).
+	\begin{equation}
+	D=[5,50]\ nm\quad \ll \quad \delta_x=\delta_y=120nm 
+	\end{equation}
+	A Coulomb-kölcsönhatás a távolság négyzetével fordítottan arányos, így az előbb említettek értelmében egy mérési pont néhány 
+	szomszédjáig, pontosabban a mérési pont egy redukált környezetét szükséges csupán szimulálni.
+	Hiszen azon kívül már elhanyagolható a villamos térerősség.
 	(Másképpen megfogalmazva a vízszintes mérési pontok távolsága jóval nagyobb mint a Coulomb-kölcsönhatás effektív távolsága).
-	Ezzel az elhanyagolással a feladat már numerikusan kezelhető méretűre csökken.
 	
-	Ezen módon egy mért pont $3\times3$-as $(360\times360 nm)$-es környezetét veszem figyelembe,
-	a középső pont felett lévő elektródát (tűt) feltételezve.
-	A szimulációs tér alsó felületét (minta felületét) az említett környzet adja.
+	A tipikus AFM tűk terét a MATLAB Partial Differential Equiation Toolbox-al szimuláltam.
+	A szimulációt $1000\times 1000\times 1000\ nm$-es térfogaton $\sim5000$ elemmel végeztem, a tű $V_{tu} = 500mV$ potenciálja
+	esetén.
+	\begin{itemize}
+	  \item A minta-tű távolság: $D=20\ nm$,
+	  \item tű sugara $R=5\ nm$,
+	  \item kúp fél nyílásszöge hegyes A típusú $Si$ esetén $\Theta=10\degree$,
+	  \item kúp fél nyílásszöge B típusú $Si_3N_4$ esetén $\Theta=35\degree$.
+	\end{itemize}
+	A szimulációk eredményei a \ref{fig:pde_sim}. ábrán látható.
+	\begin{figure}[!h]
+%		\centering
+		\subfloat[$R=5 nm$, $\Theta=10\degree$]{
+			\includegraphics[width=0.45\columnwidth]{matlab/5_10fok/pot_5_10.eps}
+		}
+		\hfil
+		\subfloat[$R=5 nm$, $\Theta=35\degree$]{
+			\includegraphics[width=0.45\columnwidth]{matlab/5_35fok/pot_5_35.eps}
+		}\\
+		\subfloat[$R=5 nm$, $\Theta=10\degree$]{
+			\includegraphics[width=0.45\columnwidth]{matlab/5_10fok/vec_5_10.eps}
+		}
+		\hfil
+		\subfloat[$R=5 nm$, $\Theta=35\degree$]{
+			\includegraphics[width=0.45\columnwidth]{matlab/5_35fok/vec_5_35.eps}
+		}
+		
+		\caption{
+			Minta-tű közötti tér végeselemes szimulációja a szimulációs térfogat meghatározásához.
+			Bal oldali oszlopban a potenciál láthatú $V$-ban mérve, jobb oldalt a térerősség nagységa $V/nm$ mérve.
+		}
+		\label{fig:pde_sim}
+	\end{figure}
+		
+	Megfigyelhető, hogy a villamos tér a kis-sugarú vég körül koncentrálódik és a következő mérési pontra már elhanyagolható nagyságú
+	lesz. Ennek megfelelően egy mért pont $3\times3$-as azaz $(240\times240 nm)$-es alapterületű térfogatot szükséges szimulálni. 
+	\begin{center}
+		Ezzel az elhanyagolással a feladat már numerikusan kezelhető méretűre csökken.
+	\end{center}
 	
-	\todo[prepend]{Interpoláció szükségessége}
+\subsection{Szimulálandó térfogat alapjának interpolációja}	
+	A térfogatra illeszkedő inhomogén pontháló függőleges felbontása illeszkedik az AFM felbontására.
+	A vizszintes pontháló korábbiaknak említettek szerint $3\times3$ pontból állna.
+	Mivel így erősen inhomogén lenne a ponthálónk, ami a konvergenciát lassítaná és a Taylor soros közelítés nem csak elsőrendű
+	hibát okoz.
 	Mivel ezen pontokra úgy is tekinthetünk, mint a minta magasság-függvényének a mintavételezésével
-	kapott mintáira, így a közbülső pontokat interpolációval (bilineáris interpolációval, mozgó átlagolással) számítom.
-	Az interpoláció $N_{ip}$ faktorával \footnote{$N_{ip}$-szeresére növeljük a pontok számát.}
-	lehetséges a szimulációs tér vízszintes felbontását $d_{ax}=d_{ay} = \delta_x / N_{ip}$ megkapni.
+	kapott mintáira, így a közbeeső pontokat interpolációval (bilineáris interpolációval, mozgó átlagolással) lehet becsülni.
+	Az eddigi vizszíntes felbontás $\delta_x = \delta_y = 120\ nm$ volt, ezt $N_{ip}=31$ pontra interpolálom.
+	Ezzel a mesterséges vizszíntes felbontás $d_{ax} = d_{ay} = 120\cdot\frac{31}{3} = 11.61\ nm$-re növekedett.
+	
+\subsection{Szimulálandó térfogat magassága}
+	\todo[]{magasabb legyen mint a felület legmagasabb pontja és a tű}
 	
 \section{Szimuláció felépítése} \label{sec:sim_felepites}
 
-	A mérési pontokhoz tartozó szimulációk során a felület magasságának mérési adatait már ismertnek feltételezzük.
+	A mérési pontokhoz tartozó szimulációk során a felület magasságának mérési adatait már ismertnek feltételezem.
 	A teljes magasságtérkép pontjait külön-külön vizsgáljuk.
 	Egyetlen pontban a mérési eredmény kiszámításának lépései az alábbiak :
 	\begin{enumerate}
 		\item A mérési pont körüli $3\times3$-as felület részének megállapítása,
-		\item Közbeeső (virtuális) mérési pontok interpolációval történő generálása a felbontás növelése végett,
-		\item Szimulálandó térfogat méretének számítása,
-		\item Direkt/iteratív megoldó algoritmussal a tér meghatározása, 
-				a tűre ható erő számítása illetve a tű alatti töltésmennyiség számítása,
-		\item Adatok mentése.
+		\item közbeeső (mesterséges) mérési pontok interpolációval történő generálása a felbontás növelése végett,
+		\item szimulálandó térfogat méretének számítása,
+		\item direkt/iteratív megoldó algoritmussal a tér meghatározása, a tűre ható erő számítása illetve a tű alatti töltésmennyiség
+		számítása,
+		\item adatok exportálása.
 	\end{enumerate}
 	
 
