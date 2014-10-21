@@ -5,11 +5,11 @@
 	adott pontossággal ismerjük.
 	A magasságmérések egy négyzetes háló felett történtek, amelynek mindkét irányában
 	$\delta_x = \delta_y \simeq 120 nm$ azonos a felbontása
-	A magasságmérés függőleges pontossága $\delta_z \simeq 20nm$ volt.
+	A magasságmérés függőleges pontossága $\delta_z \simeq 2nm$ volt.
 	A töltéssűrűség méréséhez szükséges második pásztázás során a tűt a mintához képest $V_{tu} = 500 mV$ potenciálra kapcsoljuk.
 	Illetve a fémezett felülettől közel azonos távolságra rezegtetjük és a (hosszú hegyes) tűre ható erőt mérjük.
 	
-	\noindent A dolgozatban felhasznált magasságtérkép-mérési eredmény (\ref{fig:felulet}. ábra) egy
+	\noindent A dolgozatban felhasznált magasságtérkép-mérési eredmény (\ref{fig:felulet}.~ábra) egy
 	$512\times512$ méretű szürkeárnyalatos *.tiff állomány, amely értéke $0-255$-ig terjed.
 	A mérőberendezés adatlapja alapján és a mérés végén megjelenített konstansokkal lehetséges a kép skálázása.
 	
@@ -53,15 +53,9 @@
 	algoritmusokat alkalmazni.
 	%($1\leq i\leq i_{max}$, $1\leq j\leq j_{max}$, $1\leq k\leq k_{max}$). 
 % 	Az alkalmazott interpoláció során a függőleges irányú felbontást is figyelembe véve
-	\begin{changebar}
-	A párhuzamosítási szándékok miatt az iteratív megoldást választottuk, mivel a multiprocesszoros
-	környezetek tipikusan kevés fajlagos-memóriával
-	\footnote{Fajlagos alatt az egy szimulációra jutó
-	memóriát értem. (Természetesen ezen szimulációk egyszerre futnak, így a fajlagos-memória
-	akkumulálódik.)} rendelkeznek.
-	\end{changebar}
-	%\todo[prepend]{lokál-t én basztatom és a cache lelassít ekkor a BANK conflict 	miatt}
-	Ekkor nem teljesen pontos megoldást kapunk, azonban gyorsabban juthatunk el az elfogadható eredményhez.
+	
+	A párhuzamosítási szándékok miatt az iteratív megoldást választottam, mivel kevesebb a memóriaigénye.
+	Ekkor nem teljesen pontos megoldást kapunk, de elfogadható eredményhez jutunk.
 	A számítási pontosság növelhető az iterációt leállító konvergencia követelmény keményebb
 	megszabásával, ami persze több iterációt jelent.
 	
@@ -104,7 +98,8 @@
 
 \section{Szimulálandó térfogat} \label{sec:sim_terfogat}
 \subsection{Szimulálandó térfogat alapja}
-	A felületmérés során a minta-tű távolsága jóval kissebb a mérési pontok vízszintes távolságánál (lásd \ref{fig:afm}. ábra).
+	A felületmérés során a minta-tű távolsága jóval kissebb a mérési pontok vízszintes távolságánál
+	(jelöléseket lásd a \ref{fig:afm}.	ábrán).
 	\begin{equation}
 	D=[5,50]\ nm\quad \ll \quad \delta_x=\delta_y=120nm 
 	\end{equation}
@@ -122,8 +117,9 @@
 	  \item kúp fél nyílásszöge hegyes A típusú $Si$ esetén $\Theta=10\degree$,
 	  \item kúp fél nyílásszöge B típusú $Si_3N_4$ esetén $\Theta=35\degree$.
 	\end{itemize}
-	A szimulációk eredményei a \ref{fig:pde_sim}. ábrán látható.
-	\begin{figure}[!h]
+	A szimulációk eredményei a \ref{fig:pde_sim}.~ábrán látható.
+	\newpage
+	\begin{figure}[ht]
 %		\centering
 		\subfloat[$R=5 nm$, $\Theta=10\degree$]{
 			\includegraphics[width=0.45\columnwidth]{matlab/5_10fok/pot_5_10.eps}
@@ -141,30 +137,53 @@
 		}
 		
 		\caption{
-			Minta-tű közötti tér végeselemes szimulációja a szimulációs térfogat meghatározásához.
-			Bal oldali oszlopban a potenciál láthatú $V$-ban mérve, jobb oldalt a térerősség nagységa $V/nm$ mérve.
+			Minta-tű közötti tér végeselemes szimulációjának lényeges részlete a szimulációs térfogat meghatározásához.
+			Bal oldali oszlopban a potenciál eloszlás látható $V$-ban mérve, jobb oldalt a villamos térerősség nagysága $V/nm$ mérve.
 		}
 		\label{fig:pde_sim}
 	\end{figure}
 		
-	Megfigyelhető, hogy a villamos tér a kis-sugarú vég körül koncentrálódik és a következő mérési pontra már elhanyagolható nagyságú
-	lesz. Ennek megfelelően egy mért pont $3\times3$-as azaz $(240\times240 nm)$-es alapterületű térfogatot szükséges szimulálni. 
+	Megfigyelhető, hogy a villamos tér a kis-sugarú vég körül koncentrálódik és a következő mérési pontra ($120\ nm$-re) már
+	elhanyagolható nagyságú lesz. Ennek megfelelően egy mért pont $3\times3$-as azaz $(240\times240\ nm^2)$-es alapterületű
+	térfogatot szükséges szimulálni.
 	\begin{center}
 		Ezzel az elhanyagolással a feladat már numerikusan kezelhető méretűre csökken.
 	\end{center}
 	
 \subsection{Szimulálandó térfogat alapjának interpolációja}	
-	A térfogatra illeszkedő inhomogén pontháló függőleges felbontása illeszkedik az AFM felbontására.
-	A vizszintes pontháló korábbiaknak említettek szerint $3\times3$ pontból állna.
-	Mivel így erősen inhomogén lenne a ponthálónk, ami a konvergenciát lassítaná és a Taylor soros közelítés nem csak elsőrendű
-	hibát okoz.
-	Mivel ezen pontokra úgy is tekinthetünk, mint a minta magasság-függvényének a mintavételezésével
-	kapott mintáira, így a közbeeső pontokat interpolációval (bilineáris interpolációval, mozgó átlagolással) lehet becsülni.
-	Az eddigi vizszíntes felbontás $\delta_x = \delta_y = 120\ nm$ volt, ezt $N_{ip}=31$ pontra interpolálom.
-	Ezzel a mesterséges vizszíntes felbontás $d_{ax} = d_{ay} = 120\cdot\frac{31}{3} = 11.61\ nm$-re növekedett.
+	A térfogatra illeszkedő inhomogén pontháló függőleges felbontása illeszkedik az AFM felbontására ($d_z=\delta_z = 2\ nm$).
+	A pontháló alapja a korábban említettek szerint $3\times3$ pontból állna.
+	A térfogati ponthálónk így erősen inhomogén lenne, ami a konvergenciát lassítaná és a Taylor soros közelítés során nem csak
+	elsőrendű hibát okozna.
+	Mivel a $3\times3$ pontokra úgy is tekinthetünk, mint a minta magasság-függvényének a mintavételezésével
+	kapott mintáira, így a közbeeső pontokat interpolációval (bilineáris interpolációval, aluláteresztéssel, mozgó átlagolással)
+	lehet becsülni.
+	Az eddigi vizszíntes felbontás $\delta_x = \delta_y = 120\ nm$ volt, ezt $N_{ip}$ pontra interpolálom.
+	Ezzel a mesterséges vizszíntes felbontása $d_{ax} = d_{ay} = 120\cdot\frac{3}{N_{ip}}$-re sűrűsödött. 
 	
 \subsection{Szimulálandó térfogat magassága}
-	\todo[]{magasabb legyen mint a felület legmagasabb pontja és a tű}
+	A szimulálandó tér (hasáb) alapja adott az előzőleg említett interpolált felületként, míg a
+	magassága nem. Ezt a következő két mennyiség közül a nagyobbikkal határoztam meg:
+	\begin{itemize}
+		\item Középső pont és az a fölött lévő tű közepének magassága,
+		\item A ($3\times3$) környezet legalacsonyabb és legmagasabb pontjának
+		különbsége hozzáadva a tű közepének magassága.
+	\end{itemize}
+	A következő ábrán látható ennek a demonstrációja.
+	\begin{figure}[ht]
+%		\centering
+		\subfloat[Simább felület]{
+			%\includegraphics[width=0.45\columnwidth]{matlab/5_10fok/pot_5_10.eps}
+		}
+		\hfil
+		\subfloat[Egyenletlen felület]{
+			%\includegraphics[width=0.45\columnwidth]{matlab/5_35fok/pot_5_35.eps}
+		}		
+		\caption{
+			A szimulálandó térfogat magasságának illusztrációja.
+		}
+		\label{fig:sim_numh}
+	\end{figure}
 	
 \section{Szimuláció felépítése} \label{sec:sim_felepites}
 

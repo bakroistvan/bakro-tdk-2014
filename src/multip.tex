@@ -3,14 +3,14 @@
 % ----------------------------------------------------------------------------
 \section{A szimulátor dekomponálása a párhuzamos feladatokra}
 
-\section{A szimulátor bemutatása} 
+\section{A szimulátor bemutatása}
 	 A prototípus algoritmus fejlesztése MATLAB környezetben történt, ami a későbbi referenciaként szolgál.
-	 Alap MATLAB utasításokat használva több órát vesz igénybe a szimuláció futtatása.
+	 Alap utasításokat használva több órát vesz igénybe a szimuláció futtatása.
 	 A MATLAB Parallel Toolbox-nak segítségével a szimulációt lehetséges párhuzamosan több processzormagon futtatni.
-	 Ezzel párszoros sebesség növekezés érhető el a MATLAB magas nyelvű programnyelve végett.
+	 Ezzel csupán párszoros sebesség növekezés érhető el a MATLAB magas nyelvű programnyelve végett.
 	 A következőkben magát az algoritmust és az OpenCL keretrendszerben történő implementációját mutatom be.
-	 Majd az eredmények bemutatása után összevetésre kerül a MATLAB referencia, a MATLAB Parallel Toolbox segítséggel,
-	 az OpenCL processzoron és az OpenCL GPU-n való futási ideje.
+	 Majd az eredmények bemutatása után összevetésre kerül a MATLAB referencia, a MATLAB Parallel Toolbox segítséggel és az OpenCL
+	 GPU-n való futási ideje.
 	
 \section{A lépések részletezése} 
 \subsection{Interpoláció}
@@ -20,7 +20,7 @@
 	A szimulátorban egy általánosabb módszert alkalmazunk, ami egy 2D-s mozgó átlagoló szűrővel való simítás.
 	A szűrővel aluláteresztést tudunk elérni, ami a minta magasságának mintavételezése utáni rekonstrukcióját jelenti.
 	\end{changebar}
-	Egy ilyen interpoláció eredményét láthatjuk a \ref{fig:33pont}. ábrán.
+	Egy ilyen interpoláció eredményét láthatjuk a \ref{fig:33pont}.~ábrán.
 	
 	\begin{figure}[!h]
 		\centering
@@ -35,10 +35,9 @@
 	\begin{itemize}
 		\item Középső pont fölött lévő tű közepének magassága,
 		\item A ($3\times3$) környezet legalacsonyabb és legmagasabb pontjának
-		különbsége.
+		különbsége hozzáadva a tű közepének magassága.
 	\end{itemize}
-	A magasságtérkép egy vonalának részlete látható a \ref{fig:numh}. ábrán, 
-	továbbá a szimulálandó tér (hasáb) magassága.
+	A magasságtérkép egy vonalának részlete és a szimulálandó tér (hasáb) magassága látható a \ref{fig:numh}.~ábrán.
 	
 	\begin{figure}[!ht]
 		\centering
@@ -48,7 +47,6 @@
 		\label{fig:numh} 
 	\end{figure}
 
-	
 \subsection{Iteratív megoldó algoritmus}
 	Az iterációhoz a térháló pontjaihoz két mátrixot (tömbböt) rendelünk, ami a
 	pontok potenciáljának aktuális ($\mathbf{V_{now}}$) és előző ($\mathbf{V_{prev}}$)
@@ -72,7 +70,7 @@
 	A következőkben egy kissebb teljesítményű notebook videókártyát veszek
 	alapul a megfontolások demonstrálására. Ez az nVidia GeForce 330M, 
 	575 MHz-en futó 48 CUDA core-al, 1024GB memóriával és
-	OpenCL 1.0 kompatibilitással.
+	OpenCL 1.0 kompatibilitással rendelkező notebook GPU.
 	A videókártya továbbiakban fontos paraméterei a \ref{table:vcard}. táblázatban
 	látható.
 	
@@ -86,11 +84,10 @@
 	% Some packages, such as MDW tools, offer better commands for making tables
 	% than the plain LaTeX2e tabular which is used here.
 	\begin{tabular}{l|r}
-		MAX\_COMPUTE\_UNITS & 6\\
-		MAX\_WORK\_GROUP\_SIZES & 512 512 64\\
-		GLOBAL\_MEM\_SIZE & 1073020928\\
-		MAX\_CONSTANT\_BUFFER\_SIZE & 65536\\
-		LOCAL\_MEM\_SIZE & 16384
+		MAX\_WORK\_GROUP\_SIZES & $512\ 512\ 64$\\
+		GLOBAL\_MEM\_SIZE & $1073020928$\\
+		MAX\_MEM\_ALLOC\_SIZE: & $268255232$\\
+		LOCAL\_MEM\_SIZE & $16384$
 	\end{tabular}
 	\end{table}
 	

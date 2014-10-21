@@ -17,7 +17,7 @@
 	A kernel futása végeztével a host-program kiolvassa az eszközből a kívánt eredményt.
 	
 	Az eszközök multiprocesszoros architektúrával és ezek kiszolgálására képes memória architektúrával rendelkeznek. 
-	Az architektúra heterogén való kezelésére a \ref{fig:device} ábrán vázolt modelljét nyújtja.
+	Az architektúra heterogén való kezelésére a \ref{fig:device}.~ábrán vázolt modelljét nyújtja.
 	Egy eszköz több compute unit-ot (processzor-magot) tartalmazhat, amikhez lokális memória tartozik és elérése van az eszköz globális memóriájához.
 	\newpage
 	\begin{figure}[!t]
@@ -30,17 +30,17 @@
 	
 \section{OpenCL programozási modell}
 	
-	A programozási modell a hozzá tartozó osztálydiagrammon (\ref{fig:class}. ábra) figyelhető meg.
+	A programozási modell a hozzá tartozó osztálydiagrammon (\ref{fig:class}.~ábra) figyelhető meg.
 	
 	\begin{figure}[!ht]
 		\centering
-		\includegraphics[width=0.6\columnwidth]{figures/eps/context.eps}
+		\includegraphics[width=0.5\columnwidth]{figures/eps/context.eps}
 		\caption{OpenCL context osztálydiagrammja (forrás: \cite{opencl})} 
 		\label{fig:class} 
 	\end{figure}
 	A futtatáshoz szükséges, hogy a kontextushoz platformot, majd azon belül
 	eszközt, az eszközhöz programot (kernelt) és memóriát rendeljünk.
-	Figyelembe kell vennünk azt a megkötést, hogy csak az egy platformon belüli
+	Figyelembe kell vennünk azt a megkötést, hogy egyszerre csak az egy platformon belüli
 	eszközök programozhatóak heterogén módon. Például: Intel platform esetén
 	lehetséges CPU-t, processzorkártyát és Intel-es GPU-t programozni, viszont nVidia kártyákat már nem.
 	
@@ -48,13 +48,13 @@
 	egységekhez (work-item) avagy processzorokhoz rendelni:
 	adat parallel módon vagy taszk parallel módon.
 	
-	Adat parallel módon (\ref{fig:data_parallel} ábra) a feldolgozandó adat egy
+	Adat parallel módon (\ref{fig:data_parallel}.~ábra) a feldolgozandó adat egy
 	részéhez rendelünk egy feldolgozó egységet. Fontos figyelembe venni az eszköz korlátos
 	számú feldolgozó egységének számát. Ha nem elég a feldolgozó egysége akkor a
 	feladat megfelelő partícionálásával lehetséges kordában tartani a szükséges
 	erőforrás számát.
 	
-	Taszk parallel módot (\ref{fig:task_parallel} ábra) olyan esetben célszerű
+	Taszk parallel módot (\ref{fig:task_parallel}.~ábra) olyan esetben célszerű
 	használna, ha a bemenet dinamikus mérete a futási időben rendkívül változik
 	illetve a végrehajtandó feladat lazán függenek össze.
 	
@@ -74,13 +74,13 @@
 	\end{figure*}
 	A processzor-magok megfelelő kihasználtságának elérése végett több ezer
 	work-item virtuálisan osztozik rajta.
-	Ezen work-item-eket work-group-okba rendezzük.
-	\todo[prepend]{Írni a csoportbarendezés motivációjáró >> SIMD \& vector}
+	Ezen work-item-eket work-group-okba rendezzük, ennek a célja a párhuzamos architektúrák Single Instuction Multiple Data (SIMD)
+	képességének szoftveres kiaknázása. Az Intel Xeon Phi processzorkártyája erre  hárdveres támogatást a vektoros
+	adattípusával nyújt.
 	A work-itemeket jelen pillanatban az OpenCL specifikációja \cite{opencl} szerint $3$ dimenziós
 	work-group-ba tudjuk rendezni. Egy példát láthatunk egy work-item indexének a globális és lokális megfelelőjére a
-	követekző \ref{fig:ndrange}. ábrán.
-	
-	\begin{figure}[!h]
+	követekző \ref{fig:ndrange}.~ábrán.
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=0.9\columnwidth]{figures/eps/ndrange.eps}
 		\caption{2D-s work-item-ek work-group-ba rendezése és indexelése (forrás: \cite{opencl})} 
@@ -171,31 +171,18 @@
 	\caption{Használandó eszközök összehasonlítása}
 	\label{table:envs}
 	\centering
-	\footnotesize
-	% Some packages, such as MDW tools, offer better commands for making tables
-	% than the plain LaTeX2e tabular which is used here.
-% 	\begin{tabular}{ l | r | r | r | r}
-% 		 & Intel Core i5 & nVidia GT330M & Intel Xeon & Xeon PHI \\ \hline
-% 		MAX COMPUTE UNITS & $4$ & $6$ & $8$ & $224$\\
-% 		MAX CLOCK FREQUENCY & 2400 & 1265 & 3000 & 1100\\
-% 		MAX WORK GROUP\_SIZE & $8192$ & $512$ & $8192$ & $8192$ \\ \hline\hline
-% 		GLOBAL MEM SIZE & $\sim 4Gbyte$ & $1Gbyte$ & $8Gbyte$ & $\sim 4.5Gbyte$\\
-% 		%MAX\_CONSTANT\_BUFFER\_SIZE & $131072$ & $65536$ & $131072$ & $131072$\\
-% 		LOCAL MEM SIZE & $32 Kbyte$ & $16 Kbyte$ & $32 Kbyte$ & $32 Kbyte$\\
-% 	\end{tabular}
-	
 	\begin{tabular}{ l | r | r}
 		 & Intel Core i5 M520 & nVidia GT330M \\ \hline
 		MAX COMPUTE UNITS & $4$ & $6$\\
 		MAX CLOCK FREQUENCY & $2400$ MHz & $1265$ MHz \\
-		MAX WORK GROUP\_SIZE & $8192$ & $512$ \\ \hline\hline
+		MAX WORK GROUP\_SIZE & $8192\ 8192\ 8192$ & $512\ 512\ 64$ \\ \hline\hline
 		GLOBAL MEM SIZE & $4Gb\ (2Gb)$ & $1Gb\ (768 Mb)$\\
 		%MAX\_CONSTANT\_BUFFER\_SIZE & $131072$ & $65536$ & $131072$ & $131072$\\
 		LOCAL MEM SIZE & $32 Kb$ & $16 Kb$\\
 	\end{tabular}
 	\end{table}
 	
-	Az összehasonlíthatóság végett a legkissebb memóriájú eszközre fogom a problémát skálázni, ami a
+	Az összehasonlíthatóság végett a legkissebb memóriájú eszközre skálázom a problémát, ami a
 	GT330M videókártya. A CPU memóriája jóval nagyobb, így a kód mindegyiken tud futni.
 
 
